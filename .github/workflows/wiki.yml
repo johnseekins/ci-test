@@ -15,7 +15,7 @@ jobs:
         env:
           TOKEN: ${{secrets.GITHUB_TOKEN}}
         run: |
-          git clone https://vika:${TOKEN}@github.com/${{GITHUB_ACTION_REPOSITORY}}.wiki.git wiki
+          git clone https://vika:${TOKEN}@github.com/$env:GITHUB_ACTION_REPOSITORY.wiki.git wiki
           # ensure old files are cleaned up
           rm -rf wiki/*
           cp -r docs/* wiki
@@ -24,7 +24,7 @@ jobs:
           git config --local user.name "github_user"
           git add .
           git commit -m "update wiki pages"
-          git push https://github_user:${token}@github.com/${{GITHUB_ACTION_REPOSITORY}}.wiki.git
+          git push https://github_user:${token}@github.com/$env:GITHUB_ACTION_REPOSITORY.wiki.git
           cd ..
           rm -rf wiki
 
