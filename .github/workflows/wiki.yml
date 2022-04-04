@@ -9,22 +9,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - name: publish
-        shell: bash
-        env:
-          TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - uses: actions/checkout@v3
+        with:
+          path: repo
+      - uses: actions/checkout@v3
+        with:
+          repository: ${{github.repository}}.wiki
+          path: wiki
+      - name: copy docs folder
         run: |
-          git clone https://vika:${TOKEN}@github.com/$env:GITHUB_ACTION_REPOSITORY.wiki.git wiki
-          # ensure old files are cleaned up
           rm -rf wiki/*
-          cp -r docs/* wiki
-          cd wiki
-          git config --local user.email "test@test.com"
-          git config --local user.name "github_user"
+          cp -r repo/docs/* wiki/
+          pushd wiki >/dev/null 2>&1
+          git config --local user.email "action@github.com"
+          git config --local user.name "Github Action"
           git add .
-          git commit -m "update wiki pages"
-          git push https://github_user:${token}@github.com/$env:GITHUB_ACTION_REPOSITORY.wiki.git
-          cd ..
-          rm -rf wiki
-
+          git commit -m "update wiki"
+      - name: push wiki changes
+        uses: ad-m/github-push-action@master
+        with:
+          repository: ${{github.repository}}.wiki
+          github_token: ${{ secrets.GITHUB_TOKEN }}
