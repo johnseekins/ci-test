@@ -18,15 +18,13 @@ jobs:
           path: wiki
       - name: copy docs folder
         run: |
-          rm -rf wiki/*
-          cp -r repo/docs/* wiki/
+          rm -rfv wiki/*
+          cp -rv repo/docs/* wiki/
+      - name: actually push changes
+        run: |
           pushd wiki >/dev/null 2>&1
           git config --local user.email "action@github.com"
           git config --local user.name "Github Action"
           git add .
           git commit -m "update wiki"
-      - name: push wiki changes
-        uses: ad-m/github-push-action@master
-        with:
-          repository: ${{github.repository}}.wiki
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git push
